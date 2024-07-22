@@ -10,16 +10,14 @@ import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { updateDocument } from "@/lib/actions/rooms.actions";
 import { Romanesco } from "next/font/google";
+import Loader from "./Loader";
 
 const CollaborativeRoom = ({
   roomId,
   roomMetadata,
-}: {
-  roomId: string;
-  roomMetadata: RoomMetadata;
-}) => {
-  const currentUserType = "editor";
-
+  currentUserType,
+  users,
+}: CollaborativeRoomProps) => {
   const [documentTitle, setDocumentTitle] = useState(roomMetadata.title);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -70,7 +68,7 @@ const CollaborativeRoom = ({
 
   return (
     <RoomProvider id={roomId}>
-      <ClientSideSuspense fallback={<div>Loading…</div>}>
+      <ClientSideSuspense fallback={<Loader />}>
         <div className="collaborative-room">
           <Header>
             <div
@@ -93,6 +91,7 @@ const CollaborativeRoom = ({
                   <p className="document-title">{documentTitle}</p>
                 </>
               )}
+
               {currentUserType === "editor" && !editing && (
                 <Image
                   src="/assets/icons/edit.svg"
@@ -103,9 +102,11 @@ const CollaborativeRoom = ({
                   className="pointer"
                 />
               )}
+
               {currentUserType !== "editor" && !editing && (
                 <p className="view-only-tag">View Only</p>
               )}
+
               {loading && <p className="text-sm text-gray-400">Saving...</p>}
             </div>
             <div className="flex w-fit flex-1 justify-end gap-2 sm:gap-3">
@@ -118,7 +119,7 @@ const CollaborativeRoom = ({
               </SignedIn>
             </div>
           </Header>
-          <Editor />
+          <Editor roomId={roomId} currentUserType={currentUserType} />
         </div>
       </ClientSideSuspense>
     </RoomProvider>
