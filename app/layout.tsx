@@ -14,7 +14,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "BetterDocs",
+  title: "CloudWrite",
   description: "Google docs but better",
 };
 
